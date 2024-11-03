@@ -102,6 +102,7 @@ async function seed() {
     const { error: postsError } = await supabase.from('posts').insert(posts)
 
     if (postsError) throw new Error(postsError.message)
+
     console.log(`✓ ${posts.length} posts créés`)
 
     console.log('✨ Seeding terminé avec succès')
