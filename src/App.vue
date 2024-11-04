@@ -20,7 +20,7 @@ import { RouterLink, RouterView } from 'vue-router'
         >Posts</RouterLink>
       </nav>
     </header>
-    <main class="mt-10">
+    <main class="mt-20">
       <RouterView />
     </main>
   </div>

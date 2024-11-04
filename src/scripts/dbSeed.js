@@ -14,8 +14,8 @@ if (!supabaseUrl || !supabaseServiceKey) {
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
-const AUTHOR_COUNT = 1
-const POSTS_PER_AUTHOR = 3
+const AUTHOR_COUNT = 4
+const POSTS_PER_AUTHOR = 5
 
 async function cleanTables() {
   try {
@@ -88,7 +88,7 @@ async function seed() {
     const posts = createdAuthors.flatMap(author =>
       Array.from({ length: POSTS_PER_AUTHOR }, () => ({
         title: faker.lorem.sentence({ min: 4, max: 8 }),
-        content: faker.lorem.paragraphs(3),
+        content: faker.lorem.paragraphs(8),
         author_id: author.id,
         created_at: faker.date
           .between({

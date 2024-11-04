@@ -1,51 +1,41 @@
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { supabase } from '@/lib/supabaseClient'
 import type { Post } from '@/core/types/Post'
 
 export const useFetchPosts = () => {
   const posts = ref<Post[]>([])
-  const isLoading = ref(true)
   const error = ref<string | null>(null)
 
   const fetchPosts = async () => {
-    try {
-      const { data, error: supabaseError } = await supabase
-        .from('posts')
-        .select('*')
-        .order('created_at', { ascending: false })
+    console.warn('⚠️ fetchPosts ⚠️')
+    const { data, error: supabaseError } = await supabase
+      .from('posts')
+      .select('*')
+      .order('created_at', { ascending: false })
 
-      if (supabaseError) throw supabaseError
-      posts.value = data || []
-    } catch (e: unknown) {
-      if (e instanceof Error) error.value = e.message
-    } finally {
-      isLoading.value = false
+    if (supabaseError) {
+      error.value = supabaseError.message
+      throw new Error(supabaseError.message)
     }
+
+    return data
   }
 
-  const fetchPostById = async (id?: number) => {
-    if (posts.value.length > 0) {
-      return posts.value.filter(post => post.id === id)
+  const fetchPostById = async (id: number) => {
+    console.warn('⚠️ fetchPostById ⚠️', id)
+    const { data, error: supabaseError } = await supabase
+      .from('posts')
+      .select('*, authors (*)')
+      .eq('id', id)
+      .single()
+
+    if (supabaseError) {
+      error.value = supabaseError.message
+      return null
     }
 
-    try {
-      const { data, error: supabaseError } = await supabase
-        .from('posts')
-        .select('*')
-        .eq('id', id)
-
-      if (supabaseError) throw supabaseError
-      posts.value = data || []
-    } catch (e: unknown) {
-      if (e instanceof Error) error.value = e.message
-    } finally {
-      isLoading.value = false
-    }
+    return data
   }
 
-  onMounted(() => {
-    fetchPosts()
-  })
-
-  return { posts, error, isLoading, fetchPosts, fetchPostById }
+  return { posts, error, fetchPosts, fetchPostById }
 }
